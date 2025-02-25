@@ -1,0 +1,43 @@
+---
+- name: Install CSP WCF
+  hosts: windows
+  tasks:
+    - name: Set the shell type to PowerShell
+      set_fact:
+        ansible_shell_type: powershell
+        ansible_shell_executable: None
+
+    - name: Return information about an existing application pool
+      community.windows.win_iis_webapppool:
+        name: ECSP_PASARELAS
+        state: present
+
+    - name: Stop IIS application pool
+      community.windows.win_iis_webapppool:
+        name: ECSP_PASARELAS
+        state: stopped
+    
+    - name: Create a new directory
+      win_file:
+        path: 'D:\ansible\installation\ecommerce\wcf'
+        state: directory
+
+    - name: Copy deploy.zip to the host
+      win_copy:
+        src: '{{ artifactPath }}/deploy.zip'
+        dest: 'D:\ansible\installation\ecommerce\wcf\deploy.zip'
+        overwrite: yes
+
+    - name: Delete all files in the directory
+      win_shell: Remove-Item -Path 'D:\Program Files\BAC Credomatic Network\CSP Ecommerce\WebSite\Services\eCSP\*' -Force -Recurse
+    
+    - name: Unzip deploy.zip
+      win_unzip:
+        src: 'D:\ansible\installation\ecommerce\wcf\deploy.zip'
+        dest: 'D:\Program Files\BAC Credomatic Network\CSP Ecommerce\WebSite\Services\eCSP'
+        overwrite: yes
+
+    - name: Start IIS application pool
+      community.windows.win_iis_webapppool:
+        name: ECSP_PASARELAS
+        state: started
