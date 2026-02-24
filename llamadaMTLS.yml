@@ -1,0 +1,86 @@
+---
+- name: Llamada MTLS usando .pfx en un solo play
+  hosts: localhost
+  gather_facts: false
+  vars:
+    api_url: "https://tu-endpoint/alguna/ruta"
+    workdir: "/tmp/mtls_cert"        # directorio temporal
+    pfx_src: "files/certificado.pfx" # ruta en tu repo Ansible
+    pfx_dest: "{{ workdir }}/certificado.pfx"
+    pfx_password: "{{ vault_pfx_password }}"  # desde Vault
+
+    client_key_enc: "{{ workdir }}/client-encrypted.key"
+    client_key: "{{ workdir }}/client.key"
+    client_crt: "{{ workdir }}/client.crt"
+
+    # si usas CA propia:
+    ca_cert_path: "/etc/pki/ca-trust/source/anchors/mi-ca.pem"
+
+    request_body:
+      perfil: "stagging"
+      Aplicacion: "RMF.Client"
+      Certificado: "1b0000001276...."
+
+  tasks:
+    - name: Crear directorio temporal
+      ansible.builtin.file:
+        path: "{{ workdir }}"
+        state: directory
+        mode: "0700"
+
+    - name: Copiar .pfx al host (localhost)
+      ansible.builtin.copy:
+        src: "{{ pfx_src }}"
+        dest: "{{ pfx_dest }}"
+        mode: "0600"
+
+    - name: Extraer clave privada cifrada desde .pfx
+      ansible.builtin.command: >
+        openssl pkcs12 -in {{ pfx_dest }}
+        -nocerts
+        -out {{ client_key_enc }}
+        -passin pass:{{ pfx_password }}
+        -passout pass:{{ pfx_password }}
+      args:
+        creates: "{{ client_key_enc }}"
+
+    - name: Quitar passphrase y generar client.key
+      ansible.builtin.command: >
+        openssl rsa
+        -in {{ client_key_enc }}
+        -out {{ client_key }}
+        -passin pass:{{ pfx_password }}
+      args:
+        creates: "{{ client_key }}"
+
+    - name: Extraer certificado público client.crt desde .pfx
+      ansible.builtin.command: >
+        openssl pkcs12 -in {{ pfx_dest }}
+        -clcerts -nokeys
+        -out {{ client_crt }}
+        -passin pass:{{ pfx_password }}
+      args:
+        creates: "{{ client_crt }}"
+
+    - name: Llamada MTLS con uri usando cert/key generados
+      ansible.builtin.uri:
+        url: "{{ api_url }}"
+        method: POST
+        body: "{{ request_body | to_nice_json }}"
+        body_format: json
+        client_cert: "{{ client_crt }}"
+        client_key: "{{ client_key }}"
+        ca_path: "{{ ca_cert_path }}"   # o quítalo si usas CA pública
+        validate_certs: true
+        return_content: true
+        headers:
+          Content-Type: "application/json"
+      register: mtls_response
+
+    - debug:
+        var: mtls_response
+
+    - name: Limpiar archivos temporales (opcional pero recomendable)
+      ansible.builtin.file:
+        path: "{{ workdir }}"
+        state: absent
