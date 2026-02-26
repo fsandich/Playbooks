@@ -161,4 +161,5 @@ openssl x509 -in certs/RMP.CLIENT.ANSIBLE.crt -noout -serial
 # Esperado: 1b000013786aabdc6326c4bb32000000001378
 
 
-
+unable to load key
+8516857984:error:09FFF06C:PEM routines:CRYPTO_internal:no start line:/AppleInternal/Library/BuildRoots/4~CG4rugD0hu_MMyfOtGzXkKREnKN0qX1CS-H2E2k/Library/Caches/com.apple.xbs/Sources/libressl/libressl-3.3/crypto/pem/pem_lib.c:694:Expecting: ANY PRIVATE KEY
