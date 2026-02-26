@@ -163,3 +163,8 @@ openssl x509 -in certs/RMP.CLIENT.ANSIBLE.crt -noout -serial
 
 unable to load key
 8516857984:error:09FFF06C:PEM routines:CRYPTO_internal:no start line:/AppleInternal/Library/BuildRoots/4~CG4rugD0hu_MMyfOtGzXkKREnKN0qX1CS-H2E2k/Library/Caches/com.apple.xbs/Sources/libressl/libressl-3.3/crypto/pem/pem_lib.c:694:Expecting: ANY PRIVATE KEY
+
+Microsoft Local Key set: <No Values>
+    localKeyID: 01 00 00 00 
+    Microsoft CSP Name: Microsoft RSA SChannel Cryptographic Provider
+    friendlyName: tq-BACCredomaticDiligenCASV2WebServerGCA-e3dc345b-cfd5-4765-a449-bc24d7c018ba
