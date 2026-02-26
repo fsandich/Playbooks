@@ -84,3 +84,81 @@
       ansible.builtin.file:
         path: "{{ workdir }}"
         state: absent
+
+---
+- name: Verificar que el CA bundle exista
+  ansible.builtin.stat:
+    path: "{{ ca_bundle_path }}"
+  register: ca_stat
+
+
+- name: Llamar al API para obtener token
+  ansible.builtin.uri:
+    url: "https://bacremesasdesa.corp.redbac.com/gateway/auth/v1/aplicacion"
+    method: POST
+    headers:
+        Content-Type: "application/json"
+    body_format: json
+    body:
+        Perfil: "Staging"
+        Aplicacion: "RMP.CLIENT.ANSIBLE"
+        Certificado: "1b000013786aabdc6326c4bb32000000001378"
+    return_content: yes
+    status_code: 200
+    timeout: 60
+    validate_certs: true
+    ca_path: "{{ ca_bundle_path }}
+    register: api_response
+
+- name: Validar estructura de respuesta
+  ansible.builtin.assert:
+    that:
+      - "{{ api_response.json is defined }}"
+      - "{{ api_response.json.contenido is defined }}"
+      - "{{ api_response.json.contenido.token is defined }}"
+    fail_msg: >-
+      La respuesta no contiene 'contenido.token'. Respuesta: {{ api_response.content | default(api_response, true) }}
+  no_log: true
+
+
+- name: Guardar token
+  ansible.builtin.set_fact:
+    mi_token: "{{ api_response.json.contenido.token }}"
+  no_log: true
+
+- name: Confirmación
+  ansible.builtin.debug:
+    msg: "Token obtenido correctamente."
+
+
+
+    mkdir -p certs
+
+# 1) Llave privada (quitar passphrase al final)
+openssl pkcs12 -in RMF.CLIENT.ANSIBLE.pfx -nocerts -out certs/RMP.CLIENT.ANSIBLE.key
+# Si pide pass del PFX, ingrésala. Luego dejar la key sin pass:
+openssl pkey -in certs/RMP.CLIENT.ANSIBLE.key -out certs/RMP.CLIENT.ANSIBLE.key
+
+# 2) Certificado de cliente
+openssl pkcs12 -in RMF.CLIENT.ANSIBLE.pfx -clcerts -nokeys -out certs/RMP.CLIENT.ANSIBLE.crt
+
+# 3) Cadena/CA del servidor (si viene en el PFX)
+openssl pkcs12 -in RMF.CLIENT.ANSIBLE.pfx -cacerts -nokeys -out certs/ca_chain.pem
+
+
+dos2unix certs/RMP.CLIENT.ANSIBLE.key certs/RMP.CLIENT.ANSIBLE.crt certs/ca_chain.pem 2>/dev/null || true
+chmod 600 certs/RMP.CLIENT.ANSIBLE.key
+chmod 644 certs/RMP.CLIENT.ANSIBLE.crt certs/ca_chain.pem
+
+
+# Cert y key deben “hacer pareja”
+openssl x509 -noout -modulus -in certs/RMP.CLIENT.ANSIBLE.crt | openssl md5
+openssl pkey  -noout -modulus -in certs/RMP.CLIENT.ANSIBLE.key | openssl md5
+# Hashes IGUALES
+
+# Serial del cert (debe coincidir con el del body)
+openssl x509 -in certs/RMP.CLIENT.ANSIBLE.crt -noout -serial
+# Esperado: 1b000013786aabdc6326c4bb32000000001378
+
+
+
