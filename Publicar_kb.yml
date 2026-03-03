@@ -29,3 +29,18 @@
     - name: Ver respuesta bruta
       debug:
         var: kb_update.json
+
+- name: Publicar KB vía Scripted REST API
+  uri:
+    url: "https://{{ sn_instance }}.service-now.com/api/x_scope/publish_kb"
+    method: POST
+    user: "{{ sn_username }}"
+    password: "{{ sn_password }}"
+    force_basic_auth: true
+    headers:
+      Content-Type: "application/json"
+      Accept: "application/json"
+    body_format: json
+    body:
+      sys_id: "{{ kb_sys_id }}"
+  register: kb_publish
