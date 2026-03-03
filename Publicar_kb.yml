@@ -1,0 +1,31 @@
+---
+- name: Publicar artículo de conocimiento vía REST genérico
+  hosts: localhost
+  gather_facts: false
+
+  vars:
+    sn_instance: "tu-instancia"          # sin .service-now.com
+    sn_username: "tu_usuario"
+    sn_password: "tu_password"
+    kb_sys_id: "SYS_ID_DEL_ARTICULO"
+
+  tasks:
+    - name: Actualizar workflow_state a published
+      uri:
+        url: "https://{{ sn_instance }}.service-now.com/api/now/table/kb_knowledge/{{ kb_sys_id }}"
+        method: PATCH
+        user: "{{ sn_username }}"
+        password: "{{ sn_password }}"
+        force_basic_auth: true
+        headers:
+          Content-Type: "application/json"
+          Accept: "application/json"
+        body_format: json
+        body:
+          workflow_state: "published"
+          active: "true"
+      register: kb_update
+
+    - name: Ver respuesta bruta
+      debug:
+        var: kb_update.json
