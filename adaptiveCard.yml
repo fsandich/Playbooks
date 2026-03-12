@@ -1,0 +1,46 @@
+{
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "type": "AdaptiveCard",
+  "version": "1.3",
+  "body": [
+    {
+      "type": "TextBlock",
+      "text": "Por favor selecciona una opción",
+      "wrap": true
+    },
+    {
+      "type": "Input.Text",
+      "id": "feedback",
+      "label": "Feedback",
+      "isRequired": true,
+      "errorMessage": "El feedback es obligatorio si eliges 'Dar feedback'",
+      "placeholder": "Escribe tu comentario aquí"
+    }
+  ],
+  "actions": [
+    {
+      "type": "Action.Submit",
+      "title": "Aceptar",
+      "data": {
+        "accion": "aceptar"
+      },
+      "associatedInputs": "none"
+    },
+    {
+      "type": "Action.Submit",
+      "title": "Dar feedback",
+      "data": {
+        "accion": "feedback"
+      },
+      "associatedInputs": "auto"
+    },
+    {
+      "type": "Action.Submit",
+      "title": "No aplica",
+      "data": {
+        "accion": "no_aplica"
+      },
+      "associatedInputs": "none"
+    }
+  ]
+}
