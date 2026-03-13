@@ -1,0 +1,20 @@
+Bag Attributes: <Empty Attributes>
+subject=/C=CR/O=Grupo Financiero BAC Credomatic/CN=BAC Credomatic Autoridad Certificadora Raiz V2
+issuer=/C=CR/O=Grupo Financiero BAC Credomatic/CN=BAC Credomatic Autoridad Certificadora Raiz V2
+-----BEGIN CERTIFICATE-----
+
+rmf.key
+Bag Attributes
+    Microsoft Local Key set: <No Values>
+    localKeyID: 01 00 00 00 
+    Microsoft CSP Name: Microsoft RSA SChannel Cryptographic Provider
+    friendlyName: tq-BACCredomaticDiligenCASV2WebServerGCA-e3dc345b-cfd5-4765-a449-bc24d7c018ba
+
+
+RNF.pem
+Bag Attributes
+    localKeyID: 01 00 00 00 
+subject=/C=CR/O=BAC LATAM SSC/OU=Remesas Familiares/CN=RMF.CLIENT.ANSIBLE.DEV
+issuer=/C=CR/O=Grupo Financiero BAC Credomatic/CN=BAC Credomatic Autoridad Certificadora Servicios V2
+-----BEGIN CERTIFICATE-----
+
