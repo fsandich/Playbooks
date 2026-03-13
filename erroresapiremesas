@@ -59,3 +59,57 @@
   },
   "_ansible_no_log": false
 }
+
+
+
+- name: Test MTLS BAC
+  hosts: localhost
+  gather_facts: false
+  vars:
+    api_url: "https://bacremesasdesa.corp.redbac.com/gateway/auth/v1/aplicacion"
+    client_cert_path: "/opt/certs/RMF.CLIENT.ANSIBLE.crt"
+    client_key_path: "/opt/certs/RMF.CLIENT.ANSIBLE.key"
+    ca_cert_path: "/opt/certs/bac-root-ca.pem"   # CA que firmó el server
+
+    request_body:
+      Perfil: "Staging"
+      Aplicacion: "RMF.CLIENT.ANSIBLE"
+      Certificado: "1b000013786aabdc6326c4bb32000000001378"
+
+  tasks:
+    - name: Verificar client cert
+      command: "openssl x509 -in {{ client_cert_path }} -noout -subject"
+      register: certcheck
+      changed_when: false
+      failed_when: certcheck.rc != 0
+
+    - name: Verificar client key
+      command: "openssl rsa -in {{ client_key_path }} -check -noout"
+      register: keycheck
+      changed_when: false
+      failed_when: keycheck.rc != 0
+
+    - name: Verificar CA (opcional)
+      command: "openssl x509 -in {{ ca_cert_path }} -noout -subject"
+      register: cacheck
+      changed_when: false
+      failed_when: cacheck.rc != 0
+
+    - name: Llamada MTLS
+      uri:
+        url: "{{ api_url }}"
+        method: POST
+        body: "{{ request_body | to_nice_json }}"
+        body_format: json
+        client_cert: "{{ client_cert_path }}"
+        client_key: "{{ client_key_path }}"
+        ca_path: "{{ ca_cert_path }}"
+        validate_certs: true
+        return_content: true
+        headers:
+          Content-Type: "application/json"
+      register: mtls_response
+
+    - debug:
+        var: mtls_response
+
