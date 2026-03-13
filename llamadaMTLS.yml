@@ -1,4 +1,103 @@
 x%7)SVXdGL4nKGLS
+---
+- name: Llamada MTLS a BAC usando certs del repo
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  vars:
+    api_url: "https://bacremesasdesa.corp.redbac.com/gateway/auth/v1/aplicacion"
+
+    # Destino en RHEL (control node o runner)
+    certs_dest_dir: "/opt/certs/bac"
+
+    client_cert_dest: "{{ certs_dest_dir }}/rmf_client.crt"
+    client_key_dest:  "{{ certs_dest_dir }}/rmf_client.key"
+    ca_cert_dest:     "{{ certs_dest_dir }}/bac_chain.pem"
+
+    # Rutas en el repo
+    client_cert_src: "files/certs/rmf_client.crt"
+    client_key_src:  "files/certs/rmf_client.key"
+    ca_cert_src:     "files/certs/bac_chain.pem"
+
+    request_body:
+      Perfil: "Staging"
+      Aplicacion: "RMF.CLIENT.ANSIBLE"
+      Certificado: "1b000013786aabdc6326c4bb32000000001378"
+
+  tasks:
+    - name: Crear directorio destino para certs
+      ansible.builtin.file:
+        path: "{{ certs_dest_dir }}"
+        state: directory
+        mode: "0700"
+
+    - name: Copiar cert cliente desde el repo
+      ansible.builtin.copy:
+        src: "{{ client_cert_src }}"
+        dest: "{{ client_cert_dest }}"
+        mode: "0600"
+
+    - name: Copiar key cliente desde el repo
+      ansible.builtin.copy:
+        src: "{{ client_key_src }}"
+        dest: "{{ client_key_dest }}"
+        mode: "0600"
+
+    - name: Copiar cadena de CA desde el repo
+      ansible.builtin.copy:
+        src: "{{ ca_cert_src }}"
+        dest: "{{ ca_cert_dest }}"
+        mode: "0644"
+
+    - name: Verificar cert cliente
+      ansible.builtin.command: >
+        openssl x509 -in {{ client_cert_dest }} -noout -subject
+      register: certcheck
+      changed_when: false
+      failed_when: certcheck.rc != 0
+
+    - name: Verificar key cliente
+      ansible.builtin.command: >
+        openssl rsa -in {{ client_key_dest }} -check -noout
+      register: keycheck
+      changed_when: false
+      failed_when: keycheck.rc != 0
+
+    - name: Verificar CA chain
+      ansible.builtin.command: >
+        openssl x509 -in {{ ca_cert_dest }} -noout -subject -issuer
+      register: cacheck
+      changed_when: false
+      failed_when: cacheck.rc != 0
+
+    - name: Llamada MTLS a BAC
+      ansible.builtin.uri:
+        url: "{{ api_url }}"
+        method: POST
+        body: "{{ request_body | to_nice_json }}"
+        body_format: json
+        client_cert: "{{ client_cert_dest }}"
+        client_key:  "{{ client_key_dest }}"
+        ca_path:     "{{ ca_cert_dest }}"
+        validate_certs: true
+        return_content: true
+        headers:
+          Content-Type: "application/json"
+        status_code: 200
+        timeout: 60
+      register: mtls_response
+
+    - name: Mostrar respuesta
+      ansible.builtin.debug:
+        var: mtls_response
+
+
+
+
+
+
+
 
 ---
 - name: Llamada MTLS usando .pfx en un solo play
