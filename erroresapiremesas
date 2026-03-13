@@ -113,3 +113,45 @@
     - debug:
         var: mtls_response
 
+
+
+{
+  "changed": false,
+  "stdout": "",
+  "stderr": "unable to load Private Key\n140102497802048:error:0909006C:PEM routines:get_name:no start line:crypto/pem/pem_lib.c:745:Expecting: ANY PRIVATE KEY",
+  "rc": 1,
+  "cmd": [
+    "openssl",
+    "rsa",
+    "-in",
+    "../certs/RMF.CLIENT.ANSIBLE.key",
+    "-check",
+    "-noout"
+  ],
+  "start": "2026-03-13 16:45:45.935081",
+  "end": "2026-03-13 16:45:45.945527",
+  "delta": "0:00:00.010446",
+  "msg": "non-zero return code",
+  "invocation": {
+    "module_args": {
+      "_raw_params": "openssl rsa -in ../certs/RMF.CLIENT.ANSIBLE.key -check -noout",
+      "_uses_shell": false,
+      "stdin_add_newline": true,
+      "strip_empty_ends": true,
+      "argv": null,
+      "chdir": null,
+      "executable": null,
+      "creates": null,
+      "removes": null,
+      "stdin": null
+    }
+  },
+  "stdout_lines": [],
+  "stderr_lines": [
+    "unable to load Private Key",
+    "140102497802048:error:0909006C:PEM routines:get_name:no start line:crypto/pem/pem_lib.c:745:Expecting: ANY PRIVATE KEY"
+  ],
+  "_ansible_no_log": false,
+  "failed_when_result": true
+}
+
