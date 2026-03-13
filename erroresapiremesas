@@ -214,3 +214,39 @@
   },
   "_ansible_no_log": false
 }
+
+
+{
+  "mtls_response": {
+    "content": "{\"contenido\":{\"token\":\"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IlJNRi5DTElFTlQuQU5TSUJMRSIsInJvbGUiOiJjbGkuc3lzdGVtIiwibmJmIjoxNzczNDI0NDEzLCJleHAiOjE3NzM0MjgwMTMsImlhdCI6MTc3MzQyNDQxMywiaXNzIjoicm1mIiwiYXVkIjoicm1mLmFwaSJ9.k5QJusZbIQBMDo1hEla9AsXReZAkw4E2C6JbvsFqnAgpZnx6UFMM1JthvmqLAh1ZkOoGKIz0L_0jI_zKqSf043KdJXfmZvAAcqYtq87Nml3G78V6-6-Dz1dxtzvL9H6NFyIdNX9f2jY_CiKA2yJnkizJF7w_KKYVhk79B6fpNV0HmXnVlV2Pz4n_rAJg4hwQqK1EAE7MNAeL8Weu2U5D9t1iKQRPAd3utbAyu6P5m-eOOPatq4hsExtoX-63Jo2uQbdxKDxRi4Kw9S0PiXMJWWkEzKeuoWBlpf3pD-XS11gj9BD6-oOqgwV14qkxcxlAgnbtimST7Ujoomea5DzzCw\",\"fechaVencimiento\":\"2026-03-13T18:53:33.1495028Z\"},\"procesado\":true,\"conectado\":true,\"error\":false,\"codigo\":200,\"mensaje\":\"Se ha generado el token JWT correctamente usando -> Perfil: 'Staging', Aplicación: 'RMF.CLIENT.ANSIBLE', Certificado: '1b00******************************1378'\"}",
+    "redirected": false,
+    "url": "https://bacremesasdesa.corp.redbac.com/gateway/auth/v1/aplicacion",
+    "status": 200,
+    "content_length": "869",
+    "content_type": "application/json; charset=utf-8",
+    "server": "Microsoft-IIS/10.0",
+    "x_powered_by": "ASP.NET",
+    "date": "Fri, 13 Mar 2026 17:53:33 GMT",
+    "connection": "close",
+    "cookies_string": "",
+    "cookies": {},
+    "msg": "OK (869 bytes)",
+    "elapsed": 0,
+    "changed": false,
+    "json": {
+      "contenido": {
+        "token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IlJNRi5DTElFTlQuQU5TSUJMRSIsInJvbGUiOiJjbGkuc3lzdGVtIiwibmJmIjoxNzczNDI0NDEzLCJleHAiOjE3NzM0MjgwMTMsImlhdCI6MTc3MzQyNDQxMywiaXNzIjoicm1mIiwiYXVkIjoicm1mLmFwaSJ9.k5QJusZbIQBMDo1hEla9AsXReZAkw4E2C6JbvsFqnAgpZnx6UFMM1JthvmqLAh1ZkOoGKIz0L_0jI_zKqSf043KdJXfmZvAAcqYtq87Nml3G78V6-6-Dz1dxtzvL9H6NFyIdNX9f2jY_CiKA2yJnkizJF7w_KKYVhk79B6fpNV0HmXnVlV2Pz4n_rAJg4hwQqK1EAE7MNAeL8Weu2U5D9t1iKQRPAd3utbAyu6P5m-eOOPatq4hsExtoX-63Jo2uQbdxKDxRi4Kw9S0PiXMJWWkEzKeuoWBlpf3pD-XS11gj9BD6-oOqgwV14qkxcxlAgnbtimST7Ujoomea5DzzCw",
+        "fechaVencimiento": "2026-03-13T18:53:33.1495028Z"
+      },
+      "procesado": true,
+      "conectado": true,
+      "error": false,
+      "codigo": 200,
+      "mensaje": "Se ha generado el token JWT correctamente usando -> Perfil: 'Staging', Aplicación: 'RMF.CLIENT.ANSIBLE', Certificado: '1b00******************************1378'"
+    },
+    "failed": false
+  },
+  "_ansible_verbose_always": true,
+  "_ansible_no_log": false,
+  "changed": false
+}
